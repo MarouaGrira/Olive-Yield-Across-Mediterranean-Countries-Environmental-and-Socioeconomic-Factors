@@ -1,0 +1,13 @@
+cdsapi
+global_land_mask
+jupyter
+matplotlib
+netcdf4
+numpy
+pandas
+plotly
+requests
+scikit-learn
+scipy
+seaborn
+xarray

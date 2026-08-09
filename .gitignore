@@ -1,0 +1,28 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# Operating System temporary files
+.DS_Store
+Thumbs.db
+
+# Power BI local backup files
+*.tmp
+*.pbit
+*.pbix.backup
+
+# SSMS / SQL Server local user settings and connection logs
+*.suo
+*.user
+*.sqlsuo
+*.sqluser
+
+# Local data protection boundary
+# Uncomment the line below by removing the '#' if your data CSVs are larger than 50MB 
+# and you wish to block the entire data directory from being pushed to GitHub
+# data/
