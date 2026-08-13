@@ -26,3 +26,7 @@ Thumbs.db
 # Uncomment the line below by removing the '#' if your data CSVs are larger than 50MB 
 # and you wish to block the entire data directory from being pushed to GitHub
 # data/
+
+# Exclude bulky ERA5 raw files from the Bronze layer
+data/01_bronze/era5_olives.zip
+data/01_bronze/era5_olives_extracted/

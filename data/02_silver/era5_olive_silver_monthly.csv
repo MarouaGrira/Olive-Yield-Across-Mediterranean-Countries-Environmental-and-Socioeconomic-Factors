@@ -1,4 +1,4 @@
-Country,Year,Month,Mean_Temperature_C,Mean_Dewpoint_C,Mean_Wind_Speed_m_s,Total_Precipitation_mm,Mean_Solar_Radiation_MJ_m2,Mean_Soil_Moisture_0_7cm,Mean_Soil_Moisture_7_28cm,Mean_Soil_Moisture_28_100cm,Mean_Soil_Temperature_7_28cm_C,Mean_Soil_Temperature_28_100cm_C
+Country,Year,Month,Mean_Temperature_C,Mean_Dewpoint_C,Mean_Wind_Speed_m_s,Total_Precipitation_mm,Total_Solar_Radiation_MJ_m2,Mean_Soil_Moisture_0_7cm,Mean_Soil_Moisture_7_28cm,Mean_Soil_Moisture_28_100cm,Mean_Soil_Temperature_7_28cm_C,Mean_Soil_Temperature_28_100cm_C
 Algeria,1985,1,6.3795166,2.4095764,2.8660657,68.8577835559845,230.16075611114502,0.33317104,0.32791728,0.28008565,6.634796,8.280487
 Algeria,1985,2,11.320221,5.452301,2.753909,34.457561016082764,314.6098442077637,0.28217876,0.2989149,0.2798414,10.104828,10.044647
 Algeria,1985,3,9.016632,4.5865784,2.864231,115.41357803344727,390.83262062072754,0.3139973,0.31807423,0.29255137,9.317474,9.641235

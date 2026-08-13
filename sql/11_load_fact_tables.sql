@@ -25,7 +25,7 @@ BEGIN
         mean_dewpoint_c,
         mean_wind_speed_m_s,
         total_precipitation_mm,
-        mean_solar_radiation_mj_m2,
+        total_solar_radiation_mj_m2,
         mean_soil_moisture_0_7cm,
         mean_soil_moisture_7_28cm,
         mean_soil_moisture_28_100cm,
@@ -40,8 +40,8 @@ BEGIN
         temperature_change,
         previous_year_yield,
         yield_growth_rate,
-        average_soil_moisture,
-        average_soil_temperature,
+        weighted_average_soil_moisture_0_100cm,
+        weighted_average_soil_temperature_7_100cm,
         temperature_yearly_change,
         precipitation_yearly_change,
         soil_moisture_yearly_change
@@ -79,7 +79,7 @@ BEGIN
         ),
         TRY_CONVERT(
             DECIMAL(18, 6),
-            NULLIF(LTRIM(RTRIM(r.mean_solar_radiation_mj_m2)), '')
+            NULLIF(LTRIM(RTRIM(r.total_solar_radiation_mj_m2)), '')
         ),
         TRY_CONVERT(
             DECIMAL(18, 6),
@@ -139,11 +139,11 @@ BEGIN
         ),
         TRY_CONVERT(
             DECIMAL(18, 6),
-            NULLIF(LTRIM(RTRIM(r.average_soil_moisture)), '')
+            NULLIF(LTRIM(RTRIM(r.weighted_average_soil_moisture_0_100cm)), '')
         ),
         TRY_CONVERT(
             DECIMAL(18, 6),
-            NULLIF(LTRIM(RTRIM(r.average_soil_temperature)), '')
+            NULLIF(LTRIM(RTRIM(r.weighted_average_soil_temperature_7_100cm)), '')
         ),
         TRY_CONVERT(
             DECIMAL(18, 6),

@@ -59,23 +59,26 @@ The project workflow employs a Medallion Data Architecture to ingest, clean, agg
        │                     │                      │
        └─────────────────────┼──────────────────────┘
                              ▼
-                        1. Bronze Layer  <── [Raw Data Storage]
+                     01_bronze/ Layer    <── [Raw Multi-Source Storage]
                              │
                              ▼
-                        2. Silver Layer  <── [Cleaned Monthly Data / Standardized Indexing]
+                     02_silver/ Layer    <── [Cleaned, Merged & Enriched Dataset]
                              │
                              ▼
-                        3. Gold Layer    <── [Enriched Annual Dataset / Feature Engineering]
+                     03_gold/ Layer      <── [SFS Selected Feature Subsets]
+                             │
+                             ▼
+                     04_prediction/ Layer <── [Out-of-Sample Final Model Outputs]
 ```
 
 
-### 1. Bronze Layer (`/data/bronze`)
+### 1. Bronze Layer (`../data/01_bronze`)
 Stores completely untouched, raw extraction files fetched directly from authoritative public sources to ensure absolute data lineage.
 * `faostat_olives_bronze.csv`: Raw production baseline values from the FAOSTAT Portal.
 * `era5_olive_bronze_monthly.csv`: Raw monthly atmospheric and meteorological data extractions from the Copernicus Climate Data Store.
 * `worldbank_olive_bronze.csv`: Raw macroeconomic metrics from the World Bank Open Data API.
 
-### 2. Silver Layer (`/data/silver`)
+### 2. Silver Layer (`../data/02_silver`)
 This layer handles the core data engineering, multi-source synchronization, and initial enrichment, unifying separate data streams into a consistent format backed by automated data quality validation and consistency checks.
 * `faostat_olives_silver.csv`: Aligned baseline agricultural output matrix containing olive production (tonnes), harvested area (hectares), and crop yield (kg/ha).
 * `era5_olive_silver_monthly.csv` & `era5_olive_silver_yearly.csv`: Processed atmospheric timelines tracking mean temperature (°C), dew point temperature (°C), wind speed (m/s), solar radiation (MJ/m²), and total precipitation (mm). Includes integrated multi-depth agrometeorological soil layers: Mean Soil Moisture and Mean Soil Temperature at 0–7cm, 7–28cm, and 28–100cm depths.
@@ -84,21 +87,40 @@ This layer handles the core data engineering, multi-source synchronization, and 
 * `temperature_change_annual.csv`: Enriched environmental indicator tracking annual surface temperature change anomalies calculated relative to the 1951–1980 historical baseline.
 * `integrated_silver_enriched.csv`: Final combined, multi-domain silver layer incorporating baseline datasets and temperature anomalies before targeted ML feature preparation.
 
-### 3. Gold Layer (`/data/gold`)
+### 3. Gold Layer (`../data/03_gold`)
 This layer applies advanced feature engineering to the enriched data, computing specialized climate stress indicators and advanced meteorological metrics. It creates the finalized, analytics-ready foundation used directly across downstream analysis and modeling phases.
 * `gold_olive_dataset.csv`: The final, feature-engineered dataset containing consolidated agricultural, socioeconomic, and calculated climate stress metrics structured at the strict Country-Year grain.
+
+### 4. Prediction Layer (`../data/04_prediction`)
+Stores the dynamic model outputs, absolute percentage metrics, and error profiles generated during final validation and testing stages.
+* `knn_test_predictions.csv`: Enriched out-of-sample data tracking real vs. predicted yield benchmarks, dedicated prediction error variants, and localized validation labels.
+
 
 ## Dataset Enrichment & Feature Engineering Phase
 
 After the initial integration of the primary tabular datasets, the analytical pipeline executes a secondary enrichment and feature engineering phase to construct the finalized Gold Layer, maximizing machine learning predictive performance:
 
-### 1. External Data Enrichment (Notebook 1)
+### 1. External Data Enrichment (Notebook 01)
 * FAOSTAT Temperature Change Indicator (°C): The baseline integrated rows are enriched by appending annual temperature change metrics calculated relative to the 1951–1980 historical climatological baseline to isolate localized warming trends.
 
-### 2. Algorithmic Feature Engineering (Notebook 2)
+### 2. Algorithmic Feature Engineering (Notebook 02)
 Instead of relying purely on raw source variables, the dataset is enriched with custom engineered features calculated directly within the pipeline:
 * Advanced Climate Metrics: Custom calculations capturing interactions between atmospheric parameters and multi-depth soil states, such as matching surface temperatures with deep soil temperatures.
 * Climate Stress Indicators: Engineered threshold metrics designed to isolate extreme weather anomalies, seasonal variations, and moisture stress trends impacting olive cultivation over time.
+
+## 🔧 Methodology & Physics-Based Refinements (Issue #1)
+
+To improve the physical and agrometeorological accuracy of the model features, the data engineering pipeline was refactored under **Issue #1** to implement the following methodology updates:
+
+### 1. Cumulative Solar Radiation Accounting
+* **Previous Method**: Calculated as a simple temporal average across months.
+* **Updated Method**: Modeled as an **annual cumulative sum**.
+* **Reasoning**: Solar radiation represents total accumulated energy influx over time (similar to cumulative precipitation). Utilizing a temporal average artificially flattens seasonal shifts, whereas the cumulative sum correctly isolates the absolute energy budget available to the crops during the vegetative cycle.
+
+### 2. Thickness-Based Weighting for Multi-Depth Soil Layers
+* **Previous Method**: Soil moisture and temperature metrics were calculated using a simple average, giving equal weight to all layers regardless of physical size.
+* **Updated Method**: Implemented a **depth-weighted average** where each layer's contribution is strictly proportional to its physical thickness (7 cm, 21 cm, and 72 cm layers).
+* **Reasoning**: A standard average equates a thin shallow surface layer (0–7 cm) to a dense deep sub-surface block (28–100 cm), distorting the root-zone soil profile. Weighting ensures the composite moisture (0–100 cm) and temperature (7–100 cm) indicators accurately reflect true volumetric and thermal characteristics.
 
 ## Repository Workflow & System Directories
 
@@ -122,6 +144,34 @@ Encapsulates the standalone reporting layer built directly over the validated da
 * `Mediterranean_Olive_Yield_Dashboard.pbix`: A fully dynamic, single-file Power BI deployment leveraging an optimized semantic star schema.
 * Technical Implementations: Contains custom folder-organized DAX measures tables, advanced field parameters for runtime X/Y axis switching, dependent filter cascading trees, and a complete conditional machine learning error tracking matrix.
 * For visual explanations and DAX details, review the dedicated [Power BI Sub-README](./dashboard/README.md).
+
+
+## Finalist Model Assessment & Validation Performance
+
+KNN and Extra Trees were retained as finalists after achieving competitive chronological validation performance during feature selection and grid tuning. Ridge was evaluated as an interpretable linear baseline.
+
+### Global Cross-Validation Metrics (Chronological Folds)
+
+The global validation table summarizes model capabilities across the development training window:
+
+| Model | Number of Predictors | Mean MAE (kg/ha) | MAE Std | Mean RMSE (kg/ha) | Mean R² |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **KNN** | 15 | **379.782** | 48.244 | **594.882** | **0.948** |
+| **Extra Trees** | 13 | 385.022 | **25.472** | 596.478 | 0.941 |
+| **Ridge** | 17 | 451.095 | 41.779 | 635.169 | 0.935 |
+
+### Country-Level Validation Breakdown
+
+Country-level results highlight distinct performance profiles between KNN and Extra Trees:
+
+* **Error Distribution**: Extra Trees records the lower MAE and RMSE in 7 out of the 11 tracked Mediterranean countries, demonstrating localized predictive accuracy. Both architectures struggle with extreme values in Egypt, where yields are exceptionally high, resulting in the largest absolute errors, while the smallest absolute errors occur in Libya.
+* **Generalization Stability**: KNN achieves the lowest global mean validation MAE (379.782 kg/ha) and the highest mean variance explanation (R² of 0.948). However, Extra Trees demonstrates significantly lower error variability across folds (MAE Std of 25.472 vs 48.244 for KNN) while utilizing two fewer predictors.
+* **Data Sensitivity**: Learning curves indicate that KNN benefits substantially from extended historical coverage, minimizing its validation MAE as the training window grows, while Extra Trees remains structurally stable across training lengths but maintains a larger training-validation gap due to high model complexity.
+
+**Model Selection Decision**: KNN is selected for final out-of-sample test evaluation due to its minimized global MAE profile and smaller learning-curve convergence gap. Extra Trees remains an excellent robust alternative when variance minimization across temporal shifts is favored.
+
+*Evaluation note: Model selection is based entirely on the chronological development folds. The 2020–2024 test period remains untouched and provides the final independent assessment of KNN’s predictive performance.*
+
 
 ## How to Run the Pipeline Locally
 

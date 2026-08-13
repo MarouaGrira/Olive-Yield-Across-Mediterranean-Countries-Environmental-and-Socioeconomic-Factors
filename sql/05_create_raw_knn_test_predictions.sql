@@ -10,15 +10,15 @@ GO
 -- Create the raw KNN prediction table
 CREATE TABLE raw.knn_test_predictions
 (
-    country NVARCHAR(100) NULL,
-    [year] NVARCHAR(20) NULL,
-    actual_yield NVARCHAR(100) NULL,
-    predicted_yield NVARCHAR(100) NULL,
-    prediction_error NVARCHAR(100) NULL,
-    absolute_error NVARCHAR(100) NULL,
-    absolute_percentage_error NVARCHAR(100) NULL,
-    model_name NVARCHAR(100) NULL,
-    dataset_split NVARCHAR(100) NULL
+    country								NVARCHAR(100) NULL,
+    [year]								NVARCHAR(20) NULL,
+    actual_yield						NVARCHAR(100) NULL,
+    predicted_yield						NVARCHAR(100) NULL,
+    prediction_error					NVARCHAR(100) NULL,
+    absolute_error						NVARCHAR(100) NULL,
+    absolute_percentage_error			NVARCHAR(100) NULL,
+    model_name							NVARCHAR(100) NULL,
+    dataset_split						NVARCHAR(100) NULL
 );
 GO
 
