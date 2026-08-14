@@ -5,7 +5,7 @@
 
 ## Project Overview
 
-This workspace unifies multi-domain agricultural, climatic, and financial datasets at a uniform Country-Year grain. The pipeline tracks long-term historical baseline trends and short-term year-over-year rate changes, evaluating crop yield predictability via an optimized K-Nearest Neighbors (KNN) regression framework using a rigorous train-test validation split. The final phase delivers advanced business intelligence reporting, leveraging parametric visual analytics, in-memory statistical scripting, and a dedicated machine learning diagnostic portal built entirely within Power BI.
+This workspace unifies multi-domain datasets: a geospatial and spatiotemporal data science pipeline integrating Copernicus ERA5 climate/soil grids, FAOSTAT agricultural statistics, and World Bank socioeconomic indicators to model olive-yield drivers across 11 Mediterranean countries. The pipeline tracks long-term historical baseline trends and short-term year-over-year rate changes, evaluating crop yield predictability via an optimized K-Nearest Neighbors (KNN) regression framework using a rigorous train-test validation split. The final phase delivers advanced business intelligence reporting, leveraging parametric visual analytics, in-memory statistical scripting, and a dedicated machine learning diagnostic portal built entirely within Power BI.
 
 The system is engineered as a unified, three-tier modular pipeline:
 1. **Data Consolidation, Engineering & Machine Learning (`/notebooks`)**: Multi-source collection, temporal harmonization, feature engineering, and predictive modeling.
@@ -68,7 +68,7 @@ The project workflow employs a Medallion Data Architecture to ingest, clean, agg
                      03_gold/ Layer      <── [SFS Selected Feature Subsets]
                              │
                              ▼
-                     04_prediction/ Layer <── [Out-of-Sample Final Model Outputs]
+                     04_prediction/ Layer <── [Test Final Model Outputs]
 ```
 
 
