@@ -1,6 +1,7 @@
 cdsapi
 global_land_mask
 jupyter
+kaleido
 matplotlib
 netcdf4
 numpy
